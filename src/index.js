@@ -25,11 +25,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const options = {
         isDevelopmentMode: true,
         logLevel: 'verbose',
-        identifyRequest: {
-            userIdentities: {
-                customerid: 'test-customer-id'
-            }
-        },
         identityCallback: function(result) {
             console.log('Identity callback result:', result);
         }
