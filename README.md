@@ -190,4 +190,41 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 - [mParticle Web SDK](https://github.com/mParticle/mparticle-web-sdk)
 - [mParticle Media SDK](https://github.com/mParticle/mparticle-web-media-sdk)
-- Sample videos provided by [Google Sample Media](https://github.com/google/sample-media) 
+- Sample videos provided by [Google Sample Media](https://github.com/google/sample-media)
+
+## Deployment
+
+### Deploying to Vercel
+
+1. Push your code to GitHub
+
+2. Connect your repository to Vercel:
+   - Go to [Vercel](https://vercel.com)
+   - Import your repository
+   - Select the project
+
+3. Configure environment variables:
+   - Go to Project Settings > Environment Variables
+   - Add `MPARTICLE_WEB_API_KEY` with your API key
+
+4. Deploy:
+   - Vercel will automatically build and deploy your project
+   - Each push to the main branch will trigger a new deployment
+
+The build process will:
+- Run `npm run build` to create a production build
+- Output files to the `dist` directory
+- Optimize and minify all assets
+- Inject environment variables
+
+### Production Build
+
+To create a production build locally:
+```bash
+npm run build
+```
+
+This will:
+- Create an optimized production build in the `dist` directory
+- Minify JavaScript and HTML
+- Apply production-specific optimizations 

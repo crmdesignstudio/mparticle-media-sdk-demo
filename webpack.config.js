@@ -1,13 +1,15 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const Dotenv = require('dotenv-webpack');
+const webpack = require('webpack');
 
-module.exports = {
-    mode: 'development',
+module.exports = (env, argv) => ({
+    mode: argv.mode === 'production' ? 'production' : 'development',
     entry: './src/index.js',
     output: {
         path: path.resolve(__dirname, 'dist'),
         filename: 'bundle.js',
+        clean: true
     },
     module: {
         rules: [
@@ -29,14 +31,17 @@ module.exports = {
     },
     plugins: [
         new HtmlWebpackPlugin({
-            template: './src/index.html'
+            template: './src/index.html',
+            minify: argv.mode === 'production'
         }),
-        new Dotenv({
-            path: './.env', // Path to .env file
-            safe: true, // Load .env.example as well
-            systemvars: true, // Load system environment variables
-            defaults: false // Don't load .env.defaults
-        })
+        argv.mode === 'production' 
+            ? new webpack.EnvironmentPlugin(['MPARTICLE_WEB_API_KEY'])
+            : new Dotenv({
+                path: './.env',
+                safe: true,
+                systemvars: true,
+                defaults: false
+            })
     ],
     devServer: {
         static: {
@@ -46,5 +51,8 @@ module.exports = {
         port: 8081,
         hot: true,
         open: true
+    },
+    optimization: {
+        minimize: argv.mode === 'production'
     }
-}; 
+}); 
