@@ -55,11 +55,15 @@ npm start
 The demo application provides a video player with the following workflow:
 
 1. When the page loads, a muted pre-roll advertisement will play automatically
-2. After the ad ends, a "Click to Play Content" button appears
-3. Clicking the button will start and unmute the main content
-4. The main video player includes standard HTML5 video controls
-5. An "End Media Session" button allows manual termination of the tracking session
-6. All media events are logged in real-time in the events log section
+2. After 5 seconds, a "Skip Ad" button becomes available
+3. You can either:
+   - Watch the entire ad
+   - Click "Skip Ad" after 5 seconds
+4. After the ad ends or is skipped, a "Click to Play Content" button appears
+5. Clicking the button will start and unmute the main content
+6. The main video player includes standard HTML5 video controls
+7. An "End Media Session" button allows manual termination of the tracking session
+8. All media events are logged in real-time in the events log section
 
 ## Project Structure
 

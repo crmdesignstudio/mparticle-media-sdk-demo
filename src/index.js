@@ -37,6 +37,58 @@ document.addEventListener('DOMContentLoaded', function() {
             adNotice.style.display = 'block';
             isAdPlaying = true;
             
+            // Get skip button element
+            const skipAdButton = document.getElementById('skipAdButton');
+            skipAdButton.style.display = 'block';
+            
+            // Initialize skip timer
+            let skipTimer = 5;
+            const skipInterval = setInterval(() => {
+                skipTimer--;
+                if (skipTimer > 0) {
+                    skipAdButton.textContent = `Skip Ad in ${skipTimer}s`;
+                } else {
+                    skipAdButton.textContent = 'Skip Ad';
+                    skipAdButton.disabled = false;
+                    clearInterval(skipInterval);
+                }
+            }, 1000);
+
+            // Skip ad button click handler
+            skipAdButton.addEventListener('click', function skipAd() {
+                if (!skipAdButton.disabled) {
+                    clearInterval(skipInterval);
+                    mediaSession.logAdSkip();
+                    mediaSession.logAdEnd();
+                    mediaSession.logAdBreakEnd();
+                    adContainer.style.display = 'none';
+                    adNotice.style.display = 'none';
+                    skipAdButton.style.display = 'none';
+                    adVideo.pause();
+                    isAdPlaying = false;
+
+                    // Show play button overlay
+                    const contentOverlay = document.getElementById('contentOverlay');
+                    const playButton = document.getElementById('playButton');
+                    contentOverlay.style.display = 'flex';
+                    
+                    playButton.addEventListener('click', function onPlayButtonClick() {
+                        mainVideo.muted = false;
+                        mainVideo.play().then(() => {
+                            contentOverlay.style.display = 'none';
+                            playButton.removeEventListener('click', onPlayButtonClick);
+                        }).catch(error => {
+                            console.error('Error playing main content:', error);
+                            logEvent('Error', 'Failed to play main content: ' + error.message);
+                        });
+                    });
+
+                    // Clean up event listener
+                    skipAdButton.removeEventListener('click', skipAd);
+                    resolve();
+                }
+            });
+            
             // Log ad break start
             mediaSession.logAdBreakStart({
                 title: 'Pre-roll',
@@ -66,10 +118,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Ad event listeners
             adVideo.addEventListener('ended', function onAdEnded() {
+                clearInterval(skipInterval);
                 mediaSession.logAdEnd();
                 mediaSession.logAdBreakEnd();
                 adContainer.style.display = 'none';
                 adNotice.style.display = 'none';
+                skipAdButton.style.display = 'none';
                 adVideo.removeEventListener('ended', onAdEnded);
                 isAdPlaying = false;
 
@@ -79,7 +133,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 contentOverlay.style.display = 'flex';
                 
                 playButton.addEventListener('click', function onPlayButtonClick() {
-                    mainVideo.muted = false; // Unmute when user clicks
+                    mainVideo.muted = false;
                     mainVideo.play().then(() => {
                         contentOverlay.style.display = 'none';
                         playButton.removeEventListener('click', onPlayButtonClick);
